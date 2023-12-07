@@ -1,0 +1,8 @@
+{"num_blocks": 1, "block_size": 1073741824, "parallel_downloads": 1, "elapsed_us": 316545, "mbps": 3234.927103571372}
+{"num_blocks": 6, "block_size": 214748364, "parallel_downloads": 5, "elapsed_us": 108537, "mbps": 9434.570699392834}
+{"num_blocks": 11, "block_size": 107374182, "parallel_downloads": 10, "elapsed_us": 79726, "mbps": 12843.99066803803}
+{"num_blocks": 21, "block_size": 53687091, "parallel_downloads": 20, "elapsed_us": 85845, "mbps": 11928.475741161395}
+{"num_groups": 87381, "page_sizes": [4096, 4096, 4096], "parallel_downloads": 10, "elapsed_us": 12757024, "mbps": 80.2691986587154}
+{"num_groups": 5461, "page_sizes": [65536, 65536, 65536], "parallel_downloads": 10, "elapsed_us": 798627, "mbps": 1282.1223174272845}
+{"num_groups": 34, "page_sizes": [10485760, 10485760, 10485760], "parallel_downloads": 10, "elapsed_us": 121569, "mbps": 8390.29686844508}
+{"num_groups": 10, "page_sizes": [4096, 65536, 104857600], "parallel_downloads": 10, "elapsed_us": 456159, "mbps": 2193.6738341236282}
