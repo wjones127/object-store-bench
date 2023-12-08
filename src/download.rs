@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 use futures::{StreamExt, TryStreamExt};
 use object_store::{path::Path, ObjectStore};
+use tracing::instrument;
 
 use crate::inspect_location;
 
@@ -42,16 +43,8 @@ pub async fn parallel_download_bench(
     // TODO: add tracing
     let start = std::time::Instant::now();
     let _counts = futures::stream::iter(ranges_iter)
-        .map(|(location, range)| {
-            let object_store = object_store.clone();
-            tokio::task::spawn(async move {
-                object_store
-                    .get_range(&location, range)
-                    .await
-                    .map(|res| res.len())
-            })
-        })
-        .buffered(parallel_downloads)
+        .map(|(location, range)| fetch_range_len(object_store.clone(), location, range))
+        .buffer_unordered(parallel_downloads)
         .try_collect::<Vec<_>>()
         .await?;
     let end = std::time::Instant::now();
@@ -63,4 +56,19 @@ pub async fn parallel_download_bench(
     println!("{{\"num_objects\": {}, \"num_blocks\": {}, \"block_size\": {}, \"parallel_downloads\": {}, \"elapsed_us\": {}, \"mbps\": {}}}",
     objects.len(), num_blocks, block_size, parallel_downloads, elapsed_us, mbps);
     Ok(())
+}
+
+#[instrument(skip(object_store))]
+async fn fetch_range_len(
+    object_store: Arc<dyn ObjectStore>,
+    location: Path,
+    range: std::ops::Range<usize>,
+) -> Result<usize, Box<dyn std::error::Error>> {
+    Ok(tokio::task::spawn(async move {
+        object_store
+            .get_range(&location, range)
+            .await
+            .map(|res| res.len())
+    })
+    .await??)
 }

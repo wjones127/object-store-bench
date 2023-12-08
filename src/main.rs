@@ -6,6 +6,8 @@ use object_store::{parse_url, ObjectMeta};
 use object_store::{path::Path, ObjectStore};
 use rand::{thread_rng, Rng, RngCore};
 use tokio::io::AsyncWriteExt;
+use tracing_chrome::{ChromeLayerBuilder, TraceStyle};
+use tracing_subscriber::prelude::*;
 
 mod columnar;
 mod download;
@@ -95,7 +97,10 @@ struct Args {
     /// Optional name to operate on
     object_uri: String,
 
-    // TODO: tracing flag
+    /// Enable tracing for debugging
+    #[arg(short, long, default_value = "false")]
+    traced: bool,
+
     #[command(subcommand)]
     command: Option<Commands>,
 }
@@ -155,6 +160,15 @@ async fn main() {
 
     let (object_store, location) = parse_url(&url::Url::parse(&args.object_uri).unwrap()).unwrap();
     let object_store: Arc<_> = object_store.into();
+
+    let _maybe_guard = if args.traced {
+        let builder = ChromeLayerBuilder::new().trace_style(TraceStyle::Async);
+        let (chrome_layer, guard) = builder.build();
+        tracing_subscriber::registry().with(chrome_layer).init();
+        Some(guard)
+    } else {
+        None
+    };
 
     match args.command {
         Some(Commands::UploadData { size }) => {

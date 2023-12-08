@@ -26,8 +26,6 @@ pub async fn columnar_read_test(
         "expected all objects to have the same size"
     );
 
-    // let page_sizes: Arc<[usize]> = page_sizes.into();
-
     let num_columns = page_sizes.len();
     let group_size = page_sizes.iter().sum::<usize>();
     let num_groups = object_size / group_size;

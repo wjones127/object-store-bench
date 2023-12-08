@@ -26,10 +26,11 @@ cargo run --release file://$(pwd)/test_multiple upload-multiple --size $((100 * 
 ```
 
 ```bash
-cargo run --release file://$(pwd)/test_multiple_random upload-multiple --size $((100 * 1024)) --random-prefixes
+cargo run --release file://$(pwd)/test_multiple_random upload-multiple --size $((100 * 1024 * 1024)) --random-prefixes
 ```
 
 ```bash
-cargo run --release file://$(pwd)/test_multiple download
-cargo run --release file://$(pwd)/test_multiple columnar
+LOCATION=file://$(pwd)/test_multiple_random
+cargo run --release $LOCATION download
+cargo run --release $LOCATION columnar
 ```
